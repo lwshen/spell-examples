@@ -79,9 +79,15 @@ def train_model(model, lossfunc, optimizer, scheduler, num_epochs=10):
                 optimizer.zero_grad()
 
                 # forward
-                outputs = model(inputs)
-                _, preds = torch.max(outputs.data, 1)
-                loss = lossfunc(outputs, labels)
+                if phase == 'val':
+                  with torch.no_grad():
+                    outputs = model(inputs)
+                    _, preds = torch.max(outputs.data, 1)
+                    loss = lossfunc(outputs, labels)
+                else:
+                  outputs = model(inputs)
+                  _, preds = torch.max(outputs.data, 1)
+                  loss = lossfunc(outputs, labels)
 
                 # backward + optimize only if in training phase
                 if phase == 'train':
